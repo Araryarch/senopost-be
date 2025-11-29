@@ -19,14 +19,13 @@ export class CommunitiesService {
   }
 
   async findOne(id: string) {
-    const c = await this.prisma.community.findUnique({ where: { id } });
-    if (!c) throw new NotFoundException('Community not found');
-    return c;
+    const community = await this.prisma.community.findUnique({ where: { id } });
+    if (!community) throw new NotFoundException('Community not found');
+    return community;
   }
 
   async update(id: string, dto: UpdateCommunityDto) {
-    const c = await this.prisma.community.update({ where: { id }, data: { description: dto.description } });
-    return c;
+    return this.prisma.community.update({ where: { id }, data: { description: dto.description } });
   }
 
   async remove(id: string) {

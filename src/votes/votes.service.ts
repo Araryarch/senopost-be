@@ -7,7 +7,6 @@ export class VotesService {
   constructor(private prisma: PrismaService) {}
 
   private async upsertVote(userId: string, targetId: string, targetType: 'post' | 'comment', value: number) {
-    // create or update vote
     const existing = await this.prisma.vote.findUnique({ where: { userId_targetId_targetType: { userId, targetId, targetType } } as any });
 
     if (!existing) {
@@ -16,7 +15,6 @@ export class VotesService {
       await this.prisma.vote.update({ where: { userId_targetId_targetType: { userId, targetId, targetType } } as any, data: { value } });
     }
 
-    // recalc score
     const agg = await this.prisma.vote.aggregate({ where: { targetId, targetType }, _sum: { value: true } });
     const score = agg._sum.value ?? 0;
 

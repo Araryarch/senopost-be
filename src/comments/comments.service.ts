@@ -24,8 +24,7 @@ export class CommentsService {
   }
 
   async update(id: string, dto: UpdateCommentDto) {
-    const c = await this.prisma.comment.update({ where: { id }, data: { content: dto.content } });
-    return c;
+    return this.prisma.comment.update({ where: { id }, data: { content: dto.content } });
   }
 
   async remove(id: string) {

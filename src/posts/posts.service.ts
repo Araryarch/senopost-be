@@ -20,9 +20,9 @@ export class PostsService {
   }
 
   async findOne(id: string) {
-    const p = await this.prisma.post.findUnique({ where: { id } });
-    if (!p) throw new NotFoundException('Post not found');
-    return p;
+    const post = await this.prisma.post.findUnique({ where: { id } });
+    if (!post) throw new NotFoundException('Post not found');
+    return post;
   }
 
   async findByCommunity(cid: string) {
@@ -30,8 +30,7 @@ export class PostsService {
   }
 
   async update(id: string, dto: UpdatePostDto) {
-    const p = await this.prisma.post.update({ where: { id }, data: dto });
-    return p;
+    return this.prisma.post.update({ where: { id }, data: dto });
   }
 
   async remove(id: string) {

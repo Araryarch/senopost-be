@@ -6,17 +6,18 @@ import { PrismaPg } from '@prisma/adapter-pg';
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
-    const raw = process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? process.env.SUPABASE_DB_URL ?? process.env.SUPABASE_URL;
-    const connectionString = raw ? raw.replace(/^"|"$/g, '') : undefined;
+    const connectionString = (
+      process.env.DIRECT_URL ?? 
+      process.env.DATABASE_URL ?? 
+      process.env.SUPABASE_DB_URL ?? 
+      process.env.SUPABASE_URL
+    )?.replace(/^"|"$/g, '');
 
     if (!connectionString) {
-      throw new Error('No database connection string found. Set DIRECT_URL or DATABASE_URL in your environment.');
+      throw new Error('Database connection string not found in environment variables');
     }
 
-    const pool = new Pool({ connectionString });
-    const adapter = new PrismaPg(pool);
-
-    super({ adapter });
+    super({ adapter: new PrismaPg(new Pool({ connectionString })) });
   }
 
   async onModuleInit() {
