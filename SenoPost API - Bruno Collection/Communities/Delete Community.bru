@@ -1,0 +1,23 @@
+meta {
+  name: Delete Community
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/communities/:id
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Delete community (requires auth). Returns 204-style response object.
+}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "SenoPost API - Bruno Collection",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

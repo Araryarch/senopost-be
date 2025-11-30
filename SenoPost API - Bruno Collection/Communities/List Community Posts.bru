@@ -1,0 +1,19 @@
+meta {
+  name: List Community Posts
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/communities/:id/posts
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  List posts for a community. Replace :id with community id.
+}

@@ -1,0 +1,41 @@
+meta {
+  name: Login (save token)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/auth/login
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+}
+
+script:post-response {
+  const json = res.getBody();
+  if (json.token) {
+    bru.setEnvVar('token', json.token);
+    console.log('Saved token to environment variable `token`');
+  } else if (json.access_token) {
+    bru.setEnvVar('token', json.access_token);
+    console.log('Saved access_token to environment variable `token`');
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Login returns { token, user_id } (or { access_token }). The test script auto-saves token into {{token}}.
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Create Community
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/communities
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "name": "gaming",
+    "description": "Gaming community"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Create a community (requires Authorization header with Bearer token).
+}

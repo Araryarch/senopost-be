@@ -1,0 +1,23 @@
+meta {
+  name: Delete Comment
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{base_url}}/comments/:id
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Delete comment (requires auth).
+}

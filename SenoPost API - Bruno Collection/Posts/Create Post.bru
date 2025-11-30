@@ -1,0 +1,31 @@
+meta {
+  name: Create Post
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/communities/:cid/posts
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "title": "My first post",
+    "content": "Hello world"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Create a post inside a community. Replace :cid with community id. Requires auth.
+}

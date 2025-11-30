@@ -1,0 +1,30 @@
+meta {
+  name: Update Community
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{base_url}}/communities/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "description": "Updated description"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Update community (requires auth).
+}

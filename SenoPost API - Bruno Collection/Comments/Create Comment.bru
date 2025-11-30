@@ -1,0 +1,31 @@
+meta {
+  name: Create Comment
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/posts/:pid/comments
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "content": "Great post!",
+    "parentId": null
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Create a comment on a post (replace :pid). Requires auth.
+}

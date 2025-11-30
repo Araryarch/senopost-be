@@ -1,0 +1,31 @@
+meta {
+  name: Update Post
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{base_url}}/posts/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "title": "Updated title",
+    "content": "Updated content"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Update a post (requires auth).
+}

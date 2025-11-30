@@ -1,0 +1,30 @@
+meta {
+  name: Update User
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{base_url}}/users/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "email": "changed@example.com"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Update user (requires auth).
+}
