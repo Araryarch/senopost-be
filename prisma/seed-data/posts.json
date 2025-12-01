@@ -3,6 +3,7 @@
     "id": "8b7f5e6a-1a2b-4d8c-9f1a-1234567890ab",
     "title": "Hello",
     "content": "World",
+    "img": "https://picsum.photos/800/600?random=1",
     "authorId": "325ecb86-e190-4676-9adf-86c562db5ae8",
     "communityId": "d0a3f297-61a0-4654-969b-82fa4e659b7c"
   }

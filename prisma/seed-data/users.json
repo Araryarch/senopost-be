@@ -2,6 +2,8 @@
   {
     "id": "325ecb86-e190-4676-9adf-86c562db5ae8",
     "email": "alice@example.com",
+    "username": "alice_wonderland",
+    "photo": "https://i.pravatar.cc/150?img=1",
     "password": "Password123"
   }
 ]

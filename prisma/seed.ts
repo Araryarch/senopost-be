@@ -30,8 +30,8 @@ async function main() {
     for (const u of users) {
       const pwd = u.password ? await bcrypt.hash(u.password, 10) : null;
       await client.query(
-        `INSERT INTO "User" (id, email, password, provider, sub, "createdAt", "updatedAt") VALUES ($1,$2,$3,$4,$5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON CONFLICT (id) DO NOTHING`,
-        [u.id, u.email, pwd, null, null]
+        `INSERT INTO "User" (id, email, username, photo, password, provider, sub, "createdAt", "updatedAt") VALUES ($1,$2,$3,$4,$5,$6,$7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON CONFLICT (id) DO NOTHING`,
+        [u.id, u.email, u.username ?? null, u.photo ?? null, pwd, null, null]
       );
     }
 
@@ -46,8 +46,8 @@ async function main() {
     const posts = load('posts.json');
     for (const p of posts) {
       await client.query(
-        `INSERT INTO "Post" (id, title, content, "authorId", "communityId", "createdAt", "updatedAt", score) VALUES ($1,$2,$3,$4,$5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0) ON CONFLICT (id) DO NOTHING`,
-        [p.id, p.title, p.content ?? null, p.authorId, p.communityId]
+        `INSERT INTO "Post" (id, title, content, img, "authorId", "communityId", "createdAt", "updatedAt", score) VALUES ($1,$2,$3,$4,$5,$6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0) ON CONFLICT (id) DO NOTHING`,
+        [p.id, p.title, p.content ?? null, p.img ?? null, p.authorId, p.communityId]
       );
     }
 
