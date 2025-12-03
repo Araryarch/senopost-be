@@ -21,4 +21,12 @@ settings {
 
 docs {
   List posts for a community. Replace :id with community id.
+  
+  **Response:**
+  Returns an object with:
+  - followerCount: Number of users following this community
+  - posts: Array of post objects with id, title, score, and createdAt
+  
+  **Authentication:**
+  No authentication required.
 }

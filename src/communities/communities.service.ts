@@ -17,14 +17,35 @@ export class CommunitiesService {
               username: true,
             },
           },
+          _count: {
+            select: {
+              posts: true,
+            },
+          },
         },
       });
+
+      // Get follower counts for all communities
+      const followerCounts = await Promise.all(
+        communities.map(async (community) => {
+          const count = await this.prisma.follow.count({
+            where: {
+              targetId: community.id,
+              targetType: 'community',
+            },
+          });
+          return { id: community.id, count };
+        })
+      );
+
+      const followerMap = new Map(followerCounts.map((fc) => [fc.id, fc.count]));
 
       return communities.map((community) => ({
         id: community.id,
         name: community.name,
         description: community.description,
         author: community.author?.username || 'Unknown',
+        followerCount: followerMap.get(community.id) || 0,
         createdAt: community.createdAt,
       }));
     } catch (error) {
@@ -85,11 +106,20 @@ export class CommunitiesService {
       });
       if (!community) throw new NotFoundException('Community not found');
       
+      // Get follower count
+      const followerCount = await this.prisma.follow.count({
+        where: {
+          targetId: id,
+          targetType: 'community',
+        },
+      });
+
       return {
         id: community.id,
         name: community.name,
         description: community.description,
         author: community.author?.username || 'Unknown',
+        followerCount,
         createdAt: community.createdAt,
         updatedAt: community.updatedAt,
       };
@@ -158,7 +188,15 @@ export class CommunitiesService {
         throw new BadRequestException('Community ID is required');
       }
 
-      return this.prisma.post.findMany({ 
+      // Get follower count
+      const followerCount = await this.prisma.follow.count({
+        where: {
+          targetId: cid,
+          targetType: 'community',
+        },
+      });
+
+      const posts = await this.prisma.post.findMany({ 
         where: { communityId: cid }, 
         select: { 
           id: true, 
@@ -168,6 +206,11 @@ export class CommunitiesService {
         },
         orderBy: { createdAt: 'desc' },
       });
+
+      return {
+        followerCount,
+        posts,
+      };
     } catch (error) {
       console.error('Error fetching community posts:', error);
       if (error instanceof BadRequestException) {

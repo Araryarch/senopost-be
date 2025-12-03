@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Delete, UseGuards, Req, Body, UnauthorizedException, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Delete, UseGuards, Req, Body, UnauthorizedException, HttpCode, HttpStatus, Post, Query, BadRequestException } from '@nestjs/common';
 import { Request } from 'express';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,6 +8,15 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 @Controller()
 export class UsersController {
   constructor(private users: UsersService) {}
+
+  @Get('users/search')
+  @HttpCode(HttpStatus.OK)
+  async searchUsers(@Query('username') username: string) {
+    if (!username) {
+      throw new BadRequestException('Username query parameter is required');
+    }
+    return this.users.searchByUsername(username);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')

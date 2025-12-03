@@ -19,6 +19,17 @@ ADD COLUMN IF NOT EXISTS "linkGithub" TEXT,
 ADD COLUMN IF NOT EXISTS "linkWebsite" TEXT,
 ADD COLUMN IF NOT EXISTS "linkInstagram" TEXT;
 
+-- Add unique constraint to username if not exists
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'User_username_key'
+  ) THEN
+    ALTER TABLE "User" ADD CONSTRAINT "User_username_key" UNIQUE ("username");
+  END IF;
+END 
+$$;
+
 -- 3. Add NSFW and spoiler fields to Post table
 ALTER TABLE "Post"
 ADD COLUMN IF NOT EXISTS "isNsfw" BOOLEAN NOT NULL DEFAULT false,

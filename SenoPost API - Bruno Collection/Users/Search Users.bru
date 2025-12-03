@@ -1,0 +1,38 @@
+meta {
+  name: Search Users
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{base_url}}/users/search?username=user
+  body: none
+  auth: none
+}
+
+params:query {
+  username: user
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Search for users by username (case-insensitive, partial match).
+  
+  **Query Parameters:**
+  - `username` (required): Username search query
+  
+  **Response:**
+  Returns array of users with:
+  - id: User ID
+  - username: Username
+  - photo: Profile photo URL
+  - bio: User bio
+  
+  Limited to 20 results.
+  
+  **Authentication:**
+  No authentication required.
+}

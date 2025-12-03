@@ -8,6 +8,37 @@ import { Prisma } from '@prisma/client';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
+  async searchByUsername(username: string) {
+    try {
+      if (!username) {
+        throw new BadRequestException('Username query is required');
+      }
+
+      const users = await this.prisma.user.findMany({
+        where: {
+          username: {
+            contains: username,
+            mode: 'insensitive',
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          photo: true,
+          bio: true,
+        },
+        take: 20, // Limit results
+      });
+
+      return users;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to search users');
+    }
+  }
+
   async findOne(id: string) {
     try {
       if (!id) {
