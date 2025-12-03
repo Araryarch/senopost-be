@@ -18,7 +18,8 @@ headers {
 body:json {
   {
     "title": "Updated title",
-    "content": "Updated content"
+    "content": "Updated content",
+    "img": ""
   }
 }
 
@@ -28,4 +29,13 @@ settings {
 
 docs {
   Update a post (requires auth).
+  
+  **Request Body:**
+  All fields are optional:
+  - `title`: Post title
+  - `content`: Post content/body text
+  - `img`: Image URL for the post
+  
+  **Authentication:**
+  Requires Bearer token.
 }

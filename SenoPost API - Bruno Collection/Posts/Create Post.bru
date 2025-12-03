@@ -18,7 +18,8 @@ headers {
 body:json {
   {
     "title": "My first post",
-    "content": "Hello world"
+    "content": "Hello world",
+    "img": ""
   }
 }
 
@@ -28,4 +29,12 @@ settings {
 
 docs {
   Create a post inside a community. Replace :cid with community id. Requires auth.
+  
+  **Request Body:**
+  - `title` (required): Post title
+  - `content` (optional): Post content/body text
+  - `img` (optional): Image URL for the post
+  
+  **Authentication:**
+  Requires Bearer token.
 }
