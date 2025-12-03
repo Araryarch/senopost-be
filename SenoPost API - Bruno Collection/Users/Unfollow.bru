@@ -1,0 +1,42 @@
+meta {
+  name: Unfollow User or Community
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{base_url}}/follow
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "targetId": "user-id-or-community-id",
+    "targetType": "user"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Unfollow a user or community.
+  
+  **Request Body:**
+  - `targetId` (required): ID of the user or community to unfollow
+  - `targetType` (required): Either "user" or "community"
+  
+  **Response:**
+  Returns success message.
+  
+  **Authentication:**
+  Requires Bearer token.
+}

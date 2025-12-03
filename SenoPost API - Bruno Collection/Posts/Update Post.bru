@@ -19,7 +19,9 @@ body:json {
   {
     "title": "Updated title",
     "content": "Updated content",
-    "img": ""
+    "img": "",
+    "isNsfw": false,
+    "isSpoiler": false
   }
 }
 
@@ -35,6 +37,8 @@ docs {
   - `title`: Post title
   - `content`: Post content/body text
   - `img`: Image URL for the post
+  - `isNsfw`: Mark post as NSFW content
+  - `isSpoiler`: Mark post as containing spoilers
   
   **Authentication:**
   Requires Bearer token.

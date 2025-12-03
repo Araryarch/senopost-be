@@ -20,7 +20,9 @@ body:json {
     "email": "newemail@example.com",
     "password": "newpassword123",
     "username": "newusername",
-    "photo": "https://example.com/photo.jpg"
+    "photo": "https://example.com/photo.jpg",
+    "nsfwEnabled": false,
+    "spoilerEnabled": false
   }
 }
 
@@ -30,5 +32,13 @@ settings {
 }
 
 docs {
-  Update current user's profile (change your own email/password). Requires Authorization.
+  Update current user's profile (change your own email/password/preferences). Requires Authorization.
+  
+  **Request Body (all optional):**
+  - `email`: New email address
+  - `password`: New password (min 6 characters)
+  - `username`: New username
+  - `photo`: Photo URL
+  - `nsfwEnabled`: Enable/disable NSFW content visibility
+  - `spoilerEnabled`: Enable/disable spoiler content visibility
 }

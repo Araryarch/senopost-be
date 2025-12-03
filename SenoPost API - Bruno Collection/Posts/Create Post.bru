@@ -19,7 +19,9 @@ body:json {
   {
     "title": "My first post",
     "content": "Hello world",
-    "img": ""
+    "img": "",
+    "isNsfw": false,
+    "isSpoiler": false
   }
 }
 
@@ -34,6 +36,8 @@ docs {
   - `title` (required): Post title
   - `content` (optional): Post content/body text
   - `img` (optional): Image URL for the post
+  - `isNsfw` (optional): Mark post as NSFW content
+  - `isSpoiler` (optional): Mark post as containing spoilers
   
   **Authentication:**
   Requires Bearer token.

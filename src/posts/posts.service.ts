@@ -27,6 +27,8 @@ export class PostsService {
           title: dto.title,
           content: dto.content,
           img: dto.img,
+          isNsfw: dto.isNsfw || false,
+          isSpoiler: dto.isSpoiler || false,
           communityId,
           authorId,
         },
@@ -74,6 +76,35 @@ export class PostsService {
         throw error;
       }
       throw new InternalServerErrorException('Failed to fetch posts');
+    }
+  }
+
+  async findByUser(userId: string) {
+    try {
+      if (!userId) {
+        throw new BadRequestException('User ID is required');
+      }
+
+      return this.prisma.post.findMany({ 
+        where: { authorId: userId }, 
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          img: true,
+          isNsfw: true,
+          isSpoiler: true,
+          score: true,
+          createdAt: true,
+          communityId: true
+        }
+      });
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to fetch user posts');
     }
   }
 

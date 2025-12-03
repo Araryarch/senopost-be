@@ -21,4 +21,10 @@ settings {
 
 docs {
   Get current authenticated user's profile. Requires Authorization header (Bearer {{token}}).
+  
+  **Response:**
+  Returns user object including:
+  - Basic info: id, email, username, photo
+  - Preferences: nsfwEnabled, spoilerEnabled
+  - User's posts array with full details
 }

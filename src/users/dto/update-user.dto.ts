@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MinLength, IsBoolean } from 'class-validator';
 
 export class UpdateUserDto {
   @IsEmail()
@@ -17,4 +17,12 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   photo?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  nsfwEnabled?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  spoilerEnabled?: boolean;
 }

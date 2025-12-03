@@ -1,0 +1,32 @@
+meta {
+  name: Get Followed
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/followed
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Get list of followed users and communities for the authenticated user.
+  
+  **Response:**
+  Returns an object with two arrays:
+  - `users`: Array of followed users (id, username, photo)
+  - `communities`: Array of followed communities (id, name, description)
+  
+  **Authentication:**
+  Requires Bearer token.
+}

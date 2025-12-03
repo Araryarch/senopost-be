@@ -22,6 +22,12 @@ export class PostsController {
     return this.svc.findByCommunity(cid);
   }
 
+  @Get('user/:userId/posts')
+  @HttpCode(HttpStatus.OK)
+  async findByUser(@Param('userId') userId: string) {
+    return this.svc.findByUser(userId);
+  }
+
   @Patch('posts/:id')
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {

@@ -1,0 +1,26 @@
+meta {
+  name: List Posts by User
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/user/:userId/posts
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Get all posts created by a specific user. Replace :userId with the user's ID.
+  
+  **Response:**
+  Returns an array of posts with id, title, content, img, isNsfw, isSpoiler, score, createdAt, and communityId.
+  
+  **Authentication:**
+  No authentication required.
+}
