@@ -15,6 +15,7 @@ export class PostsService {
         include: {
           community: {
             select: {
+              id: true,
               name: true,
             },
           },
@@ -39,6 +40,7 @@ export class PostsService {
         img: post.img,
         isNsfw: post.isNsfw,
         isSpoiler: post.isSpoiler,
+        communityId: post.community.id,
         community: post.community.name,
         author: post.author.username,
         upvotes: post.score,
