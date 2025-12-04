@@ -22,6 +22,12 @@ export class CommentsController {
     return this.svc.findByPost(pid);
   }
 
+  @Get('comments/:id')
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id') id: string) {
+    return this.svc.findOne(id);
+  }
+
   @Patch('comments/:id')
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {

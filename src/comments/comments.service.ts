@@ -82,6 +82,47 @@ export class CommentsService {
     }
   }
 
+  async findOne(id: string) {
+    try {
+      if (!id) {
+        throw new BadRequestException('Comment ID is required');
+      }
+
+      const comment = await this.prisma.comment.findUnique({
+        where: { id },
+        include: {
+          author: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      });
+
+      if (!comment) {
+        throw new NotFoundException('Comment not found');
+      }
+
+      return {
+        id: comment.id,
+        content: comment.content,
+        author: comment.author.username || comment.author.id,
+        authorId: comment.authorId,
+        postId: comment.postId,
+        parentId: comment.parentId,
+        score: comment.score,
+        createdAt: comment.createdAt,
+        updatedAt: comment.updatedAt,
+      };
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to fetch comment');
+    }
+  }
+
   async update(id: string, dto: UpdateCommentDto) {
     try {
       if (!id) {
