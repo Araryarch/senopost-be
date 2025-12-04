@@ -178,7 +178,61 @@ export class CommunitiesService {
         throw new BadRequestException('Only the author can delete this community');
       }
 
-      await this.prisma.community.delete({ where: { id } });
+      // Delete in transaction to ensure data consistency
+      await this.prisma.$transaction(async (tx) => {
+        // Get all posts in this community
+        const posts = await tx.post.findMany({ 
+          where: { communityId: id },
+          select: { id: true }
+        });
+        const postIds = posts.map(p => p.id);
+
+        if (postIds.length > 0) {
+          // Get all comment IDs for these posts
+          const comments = await tx.comment.findMany({ 
+            where: { postId: { in: postIds } },
+            select: { id: true }
+          });
+          const commentIds = comments.map(c => c.id);
+
+          // Delete all votes on comments
+          if (commentIds.length > 0) {
+            await tx.vote.deleteMany({
+              where: {
+                targetId: { in: commentIds },
+                targetType: 'comment'
+              }
+            });
+          }
+
+          // Delete all votes on posts
+          await tx.vote.deleteMany({
+            where: {
+              targetId: { in: postIds },
+              targetType: 'post'
+            }
+          });
+
+          // Delete all comments in posts
+          if (commentIds.length > 0) {
+            await tx.comment.deleteMany({ where: { postId: { in: postIds } } });
+          }
+
+          // Delete all posts
+          await tx.post.deleteMany({ where: { communityId: id } });
+        }
+
+        // Delete follows for this community
+        await tx.follow.deleteMany({ 
+          where: { 
+            targetId: id, 
+            targetType: 'community' 
+          } 
+        });
+
+        // Finally delete the community
+        await tx.community.delete({ where: { id } });
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -188,6 +242,7 @@ export class CommunitiesService {
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
+      console.error('Error deleting community:', error);
       throw new InternalServerErrorException('Failed to delete community');
     }
   }

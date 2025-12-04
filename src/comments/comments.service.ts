@@ -153,7 +153,42 @@ export class CommentsService {
         throw new BadRequestException('Comment ID is required');
       }
 
-      await this.prisma.comment.delete({ where: { id } });
+      // Delete in transaction to ensure data consistency
+      await this.prisma.$transaction(async (tx) => {
+        // Recursively get all child comment IDs
+        const getAllChildIds = async (parentId: string): Promise<string[]> => {
+          const children = await tx.comment.findMany({
+            where: { parentId },
+            select: { id: true }
+          });
+          
+          let allIds = children.map(c => c.id);
+          for (const child of children) {
+            const childIds = await getAllChildIds(child.id);
+            allIds = allIds.concat(childIds);
+          }
+          return allIds;
+        };
+
+        const childIds = await getAllChildIds(id);
+        const allCommentIds = [id, ...childIds];
+
+        // Delete all votes on this comment and its children
+        await tx.vote.deleteMany({
+          where: {
+            targetId: { in: allCommentIds },
+            targetType: 'comment'
+          }
+        });
+
+        // Delete all child comments first (bottom-up)
+        if (childIds.length > 0) {
+          await tx.comment.deleteMany({ where: { id: { in: childIds } } });
+        }
+
+        // Finally delete the parent comment
+        await tx.comment.delete({ where: { id } });
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -163,6 +198,7 @@ export class CommentsService {
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
+      console.error('Error deleting comment:', error);
       throw new InternalServerErrorException('Failed to delete comment');
     }
   }

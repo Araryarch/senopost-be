@@ -299,7 +299,41 @@ export class PostsService {
         throw new BadRequestException('Post ID is required');
       }
 
-      await this.prisma.post.delete({ where: { id } });
+      // Delete in transaction to ensure data consistency
+      await this.prisma.$transaction(async (tx) => {
+        // Get all comment IDs for this post
+        const comments = await tx.comment.findMany({ 
+          where: { postId: id },
+          select: { id: true }
+        });
+        const commentIds = comments.map(c => c.id);
+
+        // Delete votes on comments
+        if (commentIds.length > 0) {
+          await tx.vote.deleteMany({
+            where: {
+              targetId: { in: commentIds },
+              targetType: 'comment'
+            }
+          });
+        }
+
+        // Delete votes on the post
+        await tx.vote.deleteMany({
+          where: {
+            targetId: id,
+            targetType: 'post'
+          }
+        });
+
+        // Delete all comments for this post
+        if (commentIds.length > 0) {
+          await tx.comment.deleteMany({ where: { postId: id } });
+        }
+
+        // Finally delete the post
+        await tx.post.delete({ where: { id } });
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -309,6 +343,7 @@ export class PostsService {
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
+      console.error('Error deleting post:', error);
       throw new InternalServerErrorException('Failed to delete post');
     }
   }

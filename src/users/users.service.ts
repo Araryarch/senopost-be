@@ -128,7 +128,79 @@ export class UsersService {
         throw new BadRequestException('User ID is required');
       }
 
-      await this.prisma.user.delete({ where: { id } });
+      // Delete in transaction to ensure data consistency
+      await this.prisma.$transaction(async (tx) => {
+        // Delete all votes by this user
+        await tx.vote.deleteMany({ where: { userId: id } });
+
+        // Delete all follows by this user
+        await tx.follow.deleteMany({ where: { userId: id } });
+
+        // Get all posts by this user
+        const posts = await tx.post.findMany({ 
+          where: { authorId: id },
+          select: { id: true }
+        });
+        const postIds = posts.map(p => p.id);
+
+        if (postIds.length > 0) {
+          // Get all comments on user's posts
+          const comments = await tx.comment.findMany({ 
+            where: { postId: { in: postIds } },
+            select: { id: true }
+          });
+          const commentIds = comments.map(c => c.id);
+
+          // Delete votes on user's posts
+          await tx.vote.deleteMany({
+            where: {
+              targetId: { in: postIds },
+              targetType: 'post'
+            }
+          });
+
+          // Delete votes on comments
+          if (commentIds.length > 0) {
+            await tx.vote.deleteMany({
+              where: {
+                targetId: { in: commentIds },
+                targetType: 'comment'
+              }
+            });
+
+            // Delete comments on user's posts
+            await tx.comment.deleteMany({ where: { postId: { in: postIds } } });
+          }
+        }
+
+        // Delete all comments by this user
+        await tx.comment.deleteMany({ where: { authorId: id } });
+
+        // Delete all posts by this user
+        await tx.post.deleteMany({ where: { authorId: id } });
+
+        // Get user's communities
+        const communities = await tx.community.findMany({ 
+          where: { authorId: id },
+          select: { id: true }
+        });
+
+        // Delete follows for user's communities
+        if (communities.length > 0) {
+          await tx.follow.deleteMany({ 
+            where: { 
+              targetId: { in: communities.map(c => c.id) },
+              targetType: 'community'
+            } 
+          });
+        }
+
+        // Delete all communities by this user
+        await tx.community.deleteMany({ where: { authorId: id } });
+
+        // Finally delete the user
+        await tx.user.delete({ where: { id } });
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -138,6 +210,7 @@ export class UsersService {
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
+      console.error('Error deleting user:', error);
       throw new InternalServerErrorException('Failed to delete user');
     }
   }
