@@ -184,7 +184,7 @@ export class UsersService {
         throw new BadRequestException('Community ID is required');
       }
 
-      // Verify community exists
+      // community exist???
       const targetCommunity = await this.prisma.community.findUnique({ where: { id: communityId } });
       if (!targetCommunity) throw new NotFoundException('Community not found');
 

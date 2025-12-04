@@ -137,7 +137,7 @@ export class PostsService {
           },
           comments: {
             where: {
-              parentId: null, // Only get top-level comments
+              parentId: null, // Only top lvl cmmnt
             },
             include: {
               author: {
@@ -170,7 +170,7 @@ export class PostsService {
                               username: true,
                             },
                           },
-                          children: true, // Support deeper nesting if needed
+                          children: true, // deeper nest
                         },
                       },
                     },
@@ -187,7 +187,7 @@ export class PostsService {
       
       if (!post) throw new NotFoundException('Post not found');
       
-      // Transform the response to match the expected format
+      // Transform response to match expected format
       return {
         id: post.id,
         title: post.title,

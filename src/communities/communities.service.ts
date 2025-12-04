@@ -122,7 +122,6 @@ export class CommunitiesService {
         });
       } catch (error) {
         console.error('Error fetching follower count:', error);
-        // Continue without follower count if Follow table doesn't exist
       }
 
       return {
